@@ -1,7 +1,8 @@
 var request = require("request");
 var secrets = require("./secrets");
 var fs = require("fs");
-var avatarURL = [];
+var repoOwner = process.argv[2];
+var repoName = process.argv[3];
 
 /* setting up HTTP requests with URL and Headers */
 function getRepoContributors(repoOwner, repoName, cb) {
@@ -13,7 +14,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
 
-/* format data as a readable format using JSON.parse and extract avatar_url using a forEach loop and pushing to an array */
+/* format data as a readable format using JSON.parse */
 
   request(options, function(err, res, body) {
     cb(err, JSON.parse(body));
@@ -37,13 +38,16 @@ function getRepoContributors(repoOwner, repoName, cb) {
   };
 
 
-console.log(avatarURL)
+// console.log(avatarURL)
 
 
 // Run code
-getRepoContributors("jquery", "jquery", function(err, result) {
-  var avatarURL = "";
+getRepoContributors(repoOwner, repoName, function(err, result) {
+  if (!repoOwner || !repoName) {
+    console.log(`error: ${err}`);
+  }
   for (var i = 0; i < result.length; i++) {
+    var avatarURL = "";
     avatarURL = result[i].avatar_url;
     downloadImageByURL(avatarURL, `./avatar${result[i].login}.jpg`)
   }
